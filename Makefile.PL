@@ -16,5 +16,6 @@ build_requires 'Test::MockTime'           => 0;
 license 'perl';
 githubmeta;
 author_tests('xt');
+readme_from 'lib/Test/Recent.pm';
 
 WriteAll;
