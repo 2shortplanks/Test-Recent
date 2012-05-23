@@ -5,7 +5,6 @@ author:
 build_requires:
   ExtUtils::MakeMaker: 6.36
   Test::Builder::Tester: 0.09
-  Test::MockTime: 0
 configure_requires:
   ExtUtils::MakeMaker: 6.36
 distribution_type: module
@@ -24,6 +23,7 @@ no_index:
 requires:
   DateTime: 0
   DateTimeX::Easy: 0
+  Scalar::Util: 0
   Test::Builder: 0
   Time::Duration::Parse: 0
 resources:
