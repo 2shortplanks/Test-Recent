@@ -1,3 +1,6 @@
+2.00  Move to DateTime::Format::ISO8601 from DateTimeX::Easy because
+      timezones do not work in the latter
+
 1.01  Improved handling of bad times
 
 1.00  Initial release to the CPAN

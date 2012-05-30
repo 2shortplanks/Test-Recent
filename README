@@ -15,8 +15,10 @@ SYNOPSIS
        recent "2012-12-23 00:00:00", "1 hour", "mayan"
 
 DESCRIPTION
-    Simple module to check things happened recently. Uses DateTimeX::Easy
-    and Time::Duration::Parse do parse the times and durations.
+    Simple module to check things happened recently. Uses
+    DateTime::Format::ISO8601 and Time::Duration::Parse to parse the times
+    and durations (older versions of this module used DateTimeX::Easy
+    because that module didn't handle iso timezones very well.)
 
   Functions
     These are exported on demand or may be called fully qualified
@@ -50,5 +52,5 @@ BUGS
     <http://github.com/2shortplanks/Test-Recent>
 
 SEE ALSO
-    DateTimeX::Easy, Time::Duration::Parse
+    DateTime::Format::ISO8601, Time::Duration::Parse
 
