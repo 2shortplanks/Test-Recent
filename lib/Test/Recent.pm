@@ -13,7 +13,7 @@ use Scalar::Util qw(blessed);
 
 use vars qw(@EXPORT_OK $VERSION $OverridedNowForTesting);
 
-$VERSION = "1.00";
+$VERSION = "1.01";
 
 my $tester = Test::Builder->new();
 
