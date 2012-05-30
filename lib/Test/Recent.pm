@@ -5,23 +5,29 @@ use strict;
 use Test::Builder::Tester;
 
 use DateTime;
-use DateTimeX::Easy qw(datetime);
 use Time::Duration::Parse qw(parse_duration);
+use DateTime::Format::ISO8601;
 use Scalar::Util qw(blessed);
 
 #use Smart::Comments;
 
 use vars qw(@EXPORT_OK $VERSION $OverridedNowForTesting);
 
-$VERSION = "1.01";
+$VERSION = "2.00";
 
 my $tester = Test::Builder->new();
+
+sub _datetime($) {
+	my $str = shift;
+	return $str if blessed $str && $str->isa("DateTime");
+	return eval { DateTime::Format::ISO8601->parse_datetime( $str ) };  ## no critic (RequireCheckingReturnValueOfEval)
+}
 
 sub occured_within_ago($$) {
 	my $value = shift;
 	return unless defined $value;
 
-	my $time = datetime($value);
+	my $time = _datetime($value);
 	return unless defined $time;
 
 	my $duration = shift;
@@ -83,8 +89,10 @@ Test::Recent - check a time is recent
 
 =head1 DESCRIPTION
 
-Simple module to check things happened recently.  Uses DateTimeX::Easy and
-Time::Duration::Parse do parse the times and durations.
+Simple module to check things happened recently.  Uses DateTime::Format::ISO8601
+and Time::Duration::Parse to parse the times and durations (older versions of
+this module used DateTimeX::Easy because that module didn't handle iso
+timezones very well.)
 
 =head2 Functions
 
@@ -132,7 +140,7 @@ L<http://github.com/2shortplanks/Test-Recent>
 
 =head1 SEE ALSO
 
-L<DateTimeX::Easy>, L<Time::Duration::Parse>
+L<DateTime::Format::ISO8601>, L<Time::Duration::Parse>
 
 =cut
 

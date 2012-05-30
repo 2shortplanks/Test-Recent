@@ -9,7 +9,17 @@ use Test::Builder::Tester;
 ok(defined &recent, "exported");
 
 # now is not now
-my $now = DateTimeX::Easy->parse('2012-05-23T10:36:30Z');
+
+# now is not now
+my $now = DateTime->new(
+	year => '2012',
+	month => '05',
+	day => '23',
+	hour => '10',
+	minute => '36',
+	second => '30',
+	time_zone => 'Z',
+);
 
 # manually set the clock
 $Test::Recent::OverridedNowForTesting =  $now;
