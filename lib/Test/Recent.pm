@@ -1,4 +1,6 @@
 package Test::Recent;
+use 5.006;
+
 use base qw(Exporter);
 
 use strict;
@@ -13,7 +15,7 @@ use Scalar::Util qw(blessed);
 
 use vars qw(@EXPORT_OK $VERSION $OverridedNowForTesting);
 
-$VERSION = "2.00";
+$VERSION = "2.01";
 
 my $tester = Test::Builder->new();
 
