@@ -1,3 +1,6 @@
+2.01  Remove spurious use of Test::MockTime from test suite
+      (Thanks to many CPAN Testers for pointing this out)
+
 2.00  Move to DateTime::Format::ISO8601 from DateTimeX::Easy because
       timezones do not work in the latter
 

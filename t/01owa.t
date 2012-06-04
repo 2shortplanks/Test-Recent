@@ -4,7 +4,6 @@ use strict;
 
 use Test::More tests => 19;
 use Test::Recent qw(occured_within_ago);
-use Test::MockTime qw(set_absolute_time);
 
 ok(defined &occured_within_ago, "exported");
 
