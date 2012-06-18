@@ -19,9 +19,23 @@ $VERSION = "2.01";
 
 my $tester = Test::Builder->new();
 
+# utility regex
+my $YMD    = qr/[0-9]{4}-[0-9]{2}-[0-9]{2}/x;
+my $HMS    = qr/[0-9]{2}:[0-9]{2}:[0-9]{2}/x;
+my $SUBSEC = qr/[0-9]+/x;
+my $TZ     = qr/[+-][0-9]{2}/x;
+
 sub _datetime($) {
 	my $str = shift;
 	return $str if blessed $str && $str->isa("DateTime");
+
+	###
+	# munge common extra formats into ISO8601
+	###
+
+	# postgres
+	$str =~ s<\A ($YMD) [ ] ($HMS) [.] $SUBSEC ($TZ) \z><$1T$2$3>x;
+
 	return eval { DateTime::Format::ISO8601->parse_datetime( $str ) };  ## no critic (RequireCheckingReturnValueOfEval)
 }
 
@@ -83,7 +97,6 @@ Test::Recent - check a time is recent
    # check things happened in the last ten seconds
    recent DateTime->now, "now is recent!";
    recent "2012-12-23 00:00:00", "end of mayan calendar happened recently?";
-   recent "5 seconds ago", "5 seconds ago is obviously recently";
 
    # check things happened in the last hour
    recent "2012-12-23 00:00:00", DateTime::Duration->new( hours => 1 ), "mayan";
@@ -91,10 +104,7 @@ Test::Recent - check a time is recent
 
 =head1 DESCRIPTION
 
-Simple module to check things happened recently.  Uses DateTime::Format::ISO8601
-and Time::Duration::Parse to parse the times and durations (older versions of
-this module used DateTimeX::Easy because that module didn't handle iso
-timezones very well.)
+Simple module to check things happened recently.
 
 =head2 Functions
 
@@ -102,22 +112,43 @@ These are exported on demand or may be called fully qualified
 
 =over
 
-=item recent $time
+=item recent $date_and_time
 
-=item recent $time, $test_description
+=item recent $date_and_time, $test_description
 
-=item recent $time, $duration, $test_description
+=item recent $date_and_time, $duration, $test_description
 
 Tests (using the Test::Builder framework) if the time occured within the
 duration ago from the current time.  If no duration is passed, ten seconds
 is assumed.
 
-=item occured_within_ago $time, $duration
+=item occured_within_ago $date_and_time, $duration
 
 Returns true if and only if the time occured within the duration ago from
 the current time.
 
 =back
+
+=head2 Parsing of Datetimes
+
+This module supports the following things being passed in as a date and time:
+
+=over
+
+=item A DateTime object
+
+=item An ISO8601 formatted date string
+
+i.e. anything that DateTime::Format::ISO8601 can parse
+
+=item A Postgres style TIMESTAMP WITH TIME ZONE 
+
+i.e. something of the form C<YYYY-MM-DD HH:MM:SS.ssssss+TZ>
+
+=back
+
+Older verions of this module used DateTimeX::Easy to parse the datetime, but
+this proved to be unreliable.
 
 =head1 AUTHOR
 
@@ -139,6 +170,11 @@ L<https://rt.cpan.org/Dist/Display.html?Test-Recent>
 You can also address issues by forking this distribution
 on github and sending pull requests.  It can be found at
 L<http://github.com/2shortplanks/Test-Recent>
+
+In order not to depend on another DateTime library, this module converts
+postgres style TIMESTAMP WITH TIME ZONE by using a regular expression and
+simply ignoring microseconds.  This potentially introduces a one second
+inaccuracy in the recent handling.
 
 =head1 SEE ALSO
 

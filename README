@@ -8,31 +8,41 @@ SYNOPSIS
        # check things happened in the last ten seconds
        recent DateTime->now, "now is recent!";
        recent "2012-12-23 00:00:00", "end of mayan calendar happened recently?";
-       recent "5 seconds ago", "5 seconds ago is obviously recently";
 
        # check things happened in the last hour
        recent "2012-12-23 00:00:00", DateTime::Duration->new( hours => 1 ), "mayan";
        recent "2012-12-23 00:00:00", "1 hour", "mayan"
 
 DESCRIPTION
-    Simple module to check things happened recently. Uses
-    DateTime::Format::ISO8601 and Time::Duration::Parse to parse the times
-    and durations (older versions of this module used DateTimeX::Easy
-    because that module didn't handle iso timezones very well.)
+    Simple module to check things happened recently.
 
   Functions
     These are exported on demand or may be called fully qualified
 
-    recent $time
-    recent $time, $test_description
-    recent $time, $duration, $test_description
+    recent $date_and_time
+    recent $date_and_time, $test_description
+    recent $date_and_time, $duration, $test_description
         Tests (using the Test::Builder framework) if the time occured within
         the duration ago from the current time. If no duration is passed,
         ten seconds is assumed.
 
-    occured_within_ago $time, $duration
+    occured_within_ago $date_and_time, $duration
         Returns true if and only if the time occured within the duration ago
         from the current time.
+
+  Parsing of Datetimes
+    This module supports the following things being passed in as a date and
+    time:
+
+    A DateTime object
+    An ISO8601 formatted date string
+        i.e. anything that DateTime::Format::ISO8601 can parse
+
+    A Postgres style TIMESTAMP WITH TIME ZONE
+        i.e. something of the form "YYYY-MM-DD HH:MM:SS.ssssss+TZ"
+
+    Older verions of this module used DateTimeX::Easy to parse the datetime,
+    but this proved to be unreliable.
 
 AUTHOR
     Written by Mark Fowler <mark@twoshortplanks.com>
@@ -50,6 +60,11 @@ BUGS
     You can also address issues by forking this distribution on github and
     sending pull requests. It can be found at
     <http://github.com/2shortplanks/Test-Recent>
+
+    In order not to depend on another DateTime library, this module converts
+    postgres style TIMESTAMP WITH TIME ZONE by using a regular expression
+    and simply ignoring microseconds. This potentially introduces a one
+    second inaccuracy in the recent handling.
 
 SEE ALSO
     DateTime::Format::ISO8601, Time::Duration::Parse
