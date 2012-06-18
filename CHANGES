@@ -1,3 +1,5 @@
+2.02  Add support for Postgres TIMEZONE WITH TIMESTAMP type dates
+
 2.01  Remove spurious use of Test::MockTime from test suite
       (Thanks to many CPAN Testers for pointing this out)
 
