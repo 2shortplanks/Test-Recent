@@ -1,3 +1,8 @@
+2.03  Ignore nanoseconds to account for DateTime->now() not returning
+      nanoseconds and therefore erroneously determining that a timestamp
+      created with nanoseconds occurred in the future when it's just more
+      accurate
+
 2.02  Add support for Postgres TIMEZONE WITH TIMESTAMP type dates
 
 2.01  Remove spurious use of Test::MockTime from test suite
