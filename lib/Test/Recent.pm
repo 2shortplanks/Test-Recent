@@ -11,8 +11,6 @@ use Time::Duration::Parse qw(parse_duration);
 use DateTime::Format::ISO8601;
 use Scalar::Util qw(blessed);
 
-#use Smart::Comments;
-
 use vars qw(@EXPORT_OK $VERSION $OverridedNowForTesting);
 
 $VERSION = "2.02";
@@ -53,14 +51,8 @@ sub occured_within_ago($$) {
 		);
 	}
 
-	### time: $time->iso8601
-	### duration: $duration
-
 	my $now = $OverridedNowForTesting || DateTime->now();
 	my $ago = $now - $duration;
-
-	### now: $now->iso8601
-	### ago: $ago->iso8601
 
 	return if $now  < $time;
 	return if $time < $ago;
