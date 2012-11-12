@@ -22,15 +22,15 @@ DESCRIPTION
     recent $date_and_time
     recent $date_and_time, $test_description
     recent $date_and_time, $duration, $test_description
-        Tests (using the Test::Builder framework) if the time occured within
-        the duration ago from the current time. If no duration is passed,
-        ten seconds is assumed.
+        Tests (using the Test::Builder framework) if the time occurred
+        within the duration ago from the current time. If no duration is
+        passed, ten seconds is assumed.
 
     occured_within_ago $date_and_time, $duration
-        Returns true if and only if the time occured within the duration ago
-        from the current time.
+        Returns true if and only if the time occurred within the duration
+        ago from the current time.
 
-  Parsing of Datetimes
+  Parsing of DateTimes
     This module supports the following things being passed in as a date and
     time:
 
@@ -41,14 +41,14 @@ DESCRIPTION
     A Postgres style TIMESTAMP WITH TIME ZONE
         i.e. something of the form "YYYY-MM-DD HH:MM:SS.ssssss+TZ"
 
-    Older verions of this module used DateTimeX::Easy to parse the datetime,
-    but this proved to be unreliable.
+    Older versions of this module used DateTimeX::Easy to parse the
+    datetime, but this proved to be unreliable.
 
 AUTHOR
     Written by Mark Fowler <mark@twoshortplanks.com>
 
 COPYRIGHT
-    Copyright OmniTI 2012. All Rights Rerserved.
+    Copyright OmniTI 2012. All Rights Reserved.
 
     This program is free software; you can redistribute it and/or modify it
     under the same terms as Perl itself.

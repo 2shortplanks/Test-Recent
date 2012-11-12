@@ -118,18 +118,18 @@ These are exported on demand or may be called fully qualified
 
 =item recent $date_and_time, $duration, $test_description
 
-Tests (using the Test::Builder framework) if the time occured within the
+Tests (using the Test::Builder framework) if the time occurred within the
 duration ago from the current time.  If no duration is passed, ten seconds
 is assumed.
 
 =item occured_within_ago $date_and_time, $duration
 
-Returns true if and only if the time occured within the duration ago from
+Returns true if and only if the time occurred within the duration ago from
 the current time.
 
 =back
 
-=head2 Parsing of Datetimes
+=head2 Parsing of DateTimes
 
 This module supports the following things being passed in as a date and time:
 
@@ -147,7 +147,7 @@ i.e. something of the form C<YYYY-MM-DD HH:MM:SS.ssssss+TZ>
 
 =back
 
-Older verions of this module used DateTimeX::Easy to parse the datetime, but
+Older versions of this module used DateTimeX::Easy to parse the datetime, but
 this proved to be unreliable.
 
 =head1 AUTHOR
@@ -156,7 +156,7 @@ Written by Mark Fowler <mark@twoshortplanks.com>
 
 =head1 COPYRIGHT
 
-Copyright OmniTI 2012.  All Rights Rerserved.
+Copyright OmniTI 2012.  All Rights Reserved.
 
 This program is free software; you can redistribute it
 and/or modify it under the same terms as Perl itself.
