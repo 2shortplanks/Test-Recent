@@ -54,6 +54,12 @@ COPYRIGHT
     under the same terms as Perl itself.
 
 BUGS
+    This module ignores sub-seconds. This is primarily because the current
+    implementation of DateTime's "now" method does not return nanoseconds,
+    meaning that technically "now" returns a time that is in the past and
+    might occur before a timestamp you hand in that contained nanoseconds
+    (and therefore would erroneously be not concidered "recent")
+
     Bugs should be reported via this distribution's CPAN RT queue. This can
     be found at <https://rt.cpan.org/Dist/Display.html?Test-Recent>
 

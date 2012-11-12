@@ -44,6 +44,12 @@ sub occured_within_ago($$) {
 	my $time = _datetime($value);
 	return unless defined $time;
 
+	# forget the nanoseconds in the time passed to us.  This is necessary
+	# because DateTime->now() doesn't return nanoseconds, so if we don't
+	# forget nanoseconds what is passed in might actually be mistaken
+	# for something in the future
+	$time = $time->clone->set_nanosecond(0);
+
 	my $duration = shift;
 	unless (blessed $duration && $duration->isa("DateTime::Duration")) {
 		$duration = DateTime::Duration->new(
@@ -154,6 +160,12 @@ This program is free software; you can redistribute it
 and/or modify it under the same terms as Perl itself.
 
 =head1 BUGS
+
+This module ignores sub-seconds.  This is primarily because the current
+implementation of DateTime's C<now> method does not return nanoseconds, meaning
+that technically C<now> returns a time that is B<in the past> and might
+occur before a timestamp you hand in that contained nanoseconds (and therefore
+would erroneously be not concidered "recent")
 
 Bugs should be reported via this distribution's
 CPAN RT queue.  This can be found at
