@@ -1,3 +1,5 @@
+2.04  Add suport for epoch seconds
+
 2.03  Ignore nanoseconds to account for DateTime->now() not returning
       nanoseconds and therefore erroneously determining that a timestamp
       created with nanoseconds occurred in the future when it's just more

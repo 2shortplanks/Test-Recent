@@ -34,6 +34,7 @@ DESCRIPTION
     This module supports the following things being passed in as a date and
     time:
 
+    epoch seconds
     A DateTime object
     An ISO8601 formatted date string
         i.e. anything that DateTime::Format::ISO8601 can parse
