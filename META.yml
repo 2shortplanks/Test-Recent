@@ -34,4 +34,4 @@ resources:
     type: git
     url: git://github.com/2shortplanks/Test-Recent.git
     web: https://github.com/2shortplanks/Test-Recent/tree
-version: 2.03
+version: 2.04

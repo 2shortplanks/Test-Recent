@@ -13,7 +13,7 @@ use Scalar::Util qw(blessed);
 
 use vars qw(@EXPORT_OK $VERSION $OverridedNowForTesting);
 
-$VERSION = "2.03";
+$VERSION = "2.04";
 
 my $tester = Test::Builder->new();
 
@@ -22,10 +22,20 @@ my $YMD    = qr/[0-9]{4}-[0-9]{2}-[0-9]{2}/x;
 my $HMS    = qr/[0-9]{2}:[0-9]{2}:[0-9]{2}/x;
 my $SUBSEC = qr/[0-9]+/x;
 my $TZ     = qr/[+-][0-9]{2}/x;
+my $EPOCH  = qr/\A  \d+ (?:\.\d+)?  \z/x;
 
 sub _datetime($) {
 	my $str = shift;
+	return unless defined $str;
 	return $str if blessed $str && $str->isa("DateTime");
+
+	###
+	# is this epoch seconds?
+	###
+
+	if ($str =~ $EPOCH) {
+		return DateTime->from_epoch( epoch => $str );
+	}
 
 	###
 	# munge common extra formats into ISO8601
@@ -132,6 +142,8 @@ the current time.
 This module supports the following things being passed in as a date and time:
 
 =over
+
+=item epoch seconds
 
 =item A DateTime object
 

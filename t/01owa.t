@@ -2,7 +2,7 @@
 
 use strict;
 
-use Test::More tests => 22;
+use Test::More tests => 26;
 use Test::Recent qw(occured_within_ago);
 
 ok(defined &occured_within_ago, "exported");
@@ -49,6 +49,16 @@ ok !occured_within_ago('2012-05-23T06:36:19-04', "10s"), "too past";
 # test postgres style timezones
 ok occured_within_ago('2012-05-23 06:36:29.987215-04','10s'), "postgres";
 
+# test epoch seconds
+ok occured_within_ago(1337769390, '10s'), "epoch";
+ok occured_within_ago(1337769380, '10s'), "epoch 10s ago";
+
 # test we cope with something that has nanoseconds
 ok occured_within_ago('2012-05-23T10:36:30.987215','10s'), "nanoseconds (low)";
 ok occured_within_ago('2012-05-23T10:36:30.187215','10s'), "nanoseconds (high)";
+
+# test ecoch seconds with nanonseconds
+ok occured_within_ago(1337769390.1234, '10s'), "epoch nanoseconds";
+ok occured_within_ago(1337769390.988, '10s'), "epoch nanoseconds";
+
+
