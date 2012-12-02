@@ -10,8 +10,9 @@ use DateTime;
 use Time::Duration::Parse qw(parse_duration);
 use DateTime::Format::ISO8601;
 use Scalar::Util qw(blessed);
+use Carp qw(croak);
 
-use vars qw(@EXPORT_OK $VERSION $OverridedNowForTesting);
+use vars qw(@EXPORT_OK $VERSION $OverridedNowForTesting $RelativeTo);
 
 $VERSION = "2.04";
 
@@ -67,7 +68,21 @@ sub occured_within_ago($$) {
 		);
 	}
 
-	my $now = $OverridedNowForTesting || DateTime->now();
+	# people can override time!
+	my $now = $RelativeTo;
+	if (defined $now) {
+		$now = _datetime($now);
+		unless (defined $now) {
+			croak "\$Test::Recent::RelativeTo isn't parsable by Test::Recent";
+		}
+	}
+
+	# historically we allowed $OverridedNowForTesting to be used to override
+	# the sense of time.  If some muppet is still using this, let them
+	$now = $OverridedNowForTesting unless defined $now;
+
+	$now = DateTime->now() unless defined $now;
+
 	my $ago = $now - $duration;
 
 	return if $now  < $time;
@@ -159,6 +174,24 @@ i.e. something of the form C<YYYY-MM-DD HH:MM:SS.ssssss+TZ>
 
 Older versions of this module used DateTimeX::Easy to parse the datetime, but
 this proved to be unreliable.
+
+=head2 Overriding the sense of "now"
+
+Sometimes you want someone else's concept of I<now>.  For example, you might
+want to pull back the time from the database server and compare against that
+rather than your own local clock.
+
+This can be done by setting the C<$Test::Recent::RelativeTo> variable.  For
+safety's sake, this should probably be done with local:
+
+    {
+        local $Test::Recent::RelativeTo =
+            $dbh->selectcol_arrayref("SELECT NOW()")->[0];
+        recent($time);
+    }
+
+You can set C<$Test::Recent::RelativeTo> to anything that Test::Recent can
+parse.
 
 =head1 AUTHOR
 
