@@ -1,3 +1,5 @@
+2.05  Add ability to set "now" that we're comparing against
+
 2.04  Add suport for epoch seconds
 
 2.03  Ignore nanoseconds to account for DateTime->now() not returning
