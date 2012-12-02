@@ -14,7 +14,7 @@ use Carp qw(croak);
 
 use vars qw(@EXPORT_OK $VERSION $OverridedNowForTesting $RelativeTo);
 
-$VERSION = "2.04";
+$VERSION = "2.05";
 
 my $tester = Test::Builder->new();
 

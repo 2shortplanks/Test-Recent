@@ -17,6 +17,7 @@ META.yml
 README
 t/01owa.t
 t/02test.t
+t/03relto.t
 xt/001pod.t
 xt/002podcoverage.t
 xt/003perlcritic.t
