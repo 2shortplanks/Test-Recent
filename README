@@ -45,6 +45,23 @@ DESCRIPTION
     Older versions of this module used DateTimeX::Easy to parse the
     datetime, but this proved to be unreliable.
 
+  Overriding the sense of "now"
+    Sometimes you want someone else's concept of *now*. For example, you
+    might want to pull back the time from the database server and compare
+    against that rather than your own local clock.
+
+    This can be done by setting the $Test::Recent::RelativeTo variable. For
+    safety's sake, this should probably be done with local:
+
+        {
+            local $Test::Recent::RelativeTo =
+                $dbh->selectcol_arrayref("SELECT NOW()")->[0];
+            recent($time);
+        }
+
+    You can set $Test::Recent::RelativeTo to anything that Test::Recent can
+    parse.
+
 AUTHOR
     Written by Mark Fowler <mark@twoshortplanks.com>
 
