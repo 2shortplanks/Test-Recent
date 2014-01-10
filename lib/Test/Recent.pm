@@ -25,6 +25,8 @@ my $SUBSEC = qr/[0-9]+/x;
 my $TZ     = qr/[+-][0-9]{2}/x;
 my $EPOCH  = qr/\A  \d+ (?:\.\d+)?  \z/x;
 
+
+# convert anything that's passed to us into a DateTime object
 sub _datetime($) {
 	my $str = shift;
 	return unless defined $str;
@@ -48,6 +50,26 @@ sub _datetime($) {
 	return eval { DateTime::Format::ISO8601->parse_datetime( $str ) };  ## no critic (RequireCheckingReturnValueOfEval)
 }
 
+# work out what the time is now
+sub _now() {
+	# people can override time!
+	my $now = $RelativeTo;
+	if (defined $now) {
+		$now = _datetime($now);
+		unless (defined $now) {
+			croak "\$Test::Recent::RelativeTo isn't parsable by Test::Recent";
+		}
+	}
+
+	# historically we allowed $OverridedNowForTesting to be used to override
+	# the sense of time.  If some muppet is still using this, let them
+	$now = $OverridedNowForTesting unless defined $now;
+
+	$now = DateTime->now() unless defined $now;
+
+	return $now;
+}
+
 sub occured_within_ago($$) {
 	my $value = shift;
 	return unless defined $value;
@@ -68,21 +90,7 @@ sub occured_within_ago($$) {
 		);
 	}
 
-	# people can override time!
-	my $now = $RelativeTo;
-	if (defined $now) {
-		$now = _datetime($now);
-		unless (defined $now) {
-			croak "\$Test::Recent::RelativeTo isn't parsable by Test::Recent";
-		}
-	}
-
-	# historically we allowed $OverridedNowForTesting to be used to override
-	# the sense of time.  If some muppet is still using this, let them
-	$now = $OverridedNowForTesting unless defined $now;
-
-	$now = DateTime->now() unless defined $now;
-
+	my $now = _now;
 	my $ago = $now - $duration;
 
 	return if $now  < $time;
@@ -96,10 +104,13 @@ sub recent ($;$$) {
 	my $desc = pop || "recent time";
 	my $duration = shift || "10s";
 
+	# work out when now is and "freeze it"
+	local $RelativeTo = _now;
+
 	my $ok = occured_within_ago($time, $duration);
 	$tester->ok($ok, $desc);
 	return 1 if $ok;
-	$tester->diag("$time not recent");
+	$tester->diag("$time not recent to $RelativeTo");
 	return;
 }
 push @EXPORT_OK, "recent";
@@ -200,6 +211,7 @@ Written by Mark Fowler <mark@twoshortplanks.com>
 =head1 COPYRIGHT
 
 Copyright OmniTI 2012.  All Rights Reserved.
+Copyright Circonus 2014.  All Rights Reserved.
 
 This program is free software; you can redistribute it
 and/or modify it under the same terms as Perl itself.

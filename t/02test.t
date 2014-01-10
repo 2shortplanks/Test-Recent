@@ -32,7 +32,7 @@ test_test("test");
 
 test_out("not ok 1 - future");
 test_fail(+2);
-test_diag("2012-05-23T10:36:31 not recent");
+test_diag("2012-05-23T10:36:31 not recent to 2012-05-23T10:36:30");
 recent $now + DateTime::Duration->new( seconds => 1), $ten, "future";
 test_test("test");
 
@@ -42,7 +42,7 @@ test_test("test");
 
 test_out("not ok 1 - too past");
 test_fail(+2);
-test_diag("2012-05-23T10:36:19 not recent");
+test_diag("2012-05-23T10:36:19 not recent to 2012-05-23T10:36:30");
 recent $now + DateTime::Duration->new( seconds => -11), $ten, "too past";
 test_test("test");
 
@@ -53,7 +53,7 @@ test_test("test");
 
 test_out("not ok 1 - future");
 test_fail(+2);
-test_diag("2012-05-23T10:36:31Z not recent");
+test_diag("2012-05-23T10:36:31Z not recent to 2012-05-23T10:36:30");
 recent '2012-05-23T10:36:31Z', "10s", "future";
 test_test("test");
 
@@ -63,7 +63,7 @@ test_test("test");
 
 test_out("not ok 1 - too past");
 test_fail(+2);
-test_diag("2012-05-23T10:36:19Z not recent");
+test_diag("2012-05-23T10:36:19Z not recent to 2012-05-23T10:36:30");
 recent '2012-05-23T10:36:19Z', "10s", "too past";
 test_test("test");
 
