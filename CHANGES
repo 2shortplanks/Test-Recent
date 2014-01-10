@@ -1,3 +1,8 @@
+2.10  Change diagnostics to show what time we're comparing against.
+      Very useful when looking at old log files from jenkins hours later...
+
+      Add a postgres torture test in the authors test section
+
 2.05  Add ability to set "now" that we're comparing against
 
 2.04  Add suport for epoch seconds
