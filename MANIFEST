@@ -21,4 +21,5 @@ t/03relto.t
 xt/001pod.t
 xt/002podcoverage.t
 xt/003perlcritic.t
+xt/990pgtorture.t
 xt/anyperlperlcriticrc
