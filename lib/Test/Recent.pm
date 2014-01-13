@@ -105,7 +105,7 @@ sub recent ($;$$) {
 	my $duration = shift || "10s";
 
 	# work out when now is and "freeze it"
-	local $RelativeTo = _now;
+	local $RelativeTo = _now;  ## no critic (ProhibitMixedCaseVars)
 
 	my $ok = occured_within_ago($time, $duration);
 	$tester->ok($ok, $desc);
