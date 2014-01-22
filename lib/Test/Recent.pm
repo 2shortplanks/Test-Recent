@@ -14,7 +14,7 @@ use Carp qw(croak);
 
 use vars qw(@EXPORT_OK $VERSION $OverridedNowForTesting $RelativeTo);
 
-$VERSION = "2.10";
+$VERSION = "2.50";
 
 my $tester = Test::Builder->new();
 
@@ -25,6 +25,7 @@ my $SUBSEC = qr/[0-9]+/x;
 my $TZ     = qr/[+-][0-9]{2}/x;
 my $EPOCH  = qr/\A  \d+ (?:\.\d+)?  \z/x;
 
+$Test::Recent::future_duration = DateTime::Duration->new( seconds => 0 );
 
 # convert anything that's passed to us into a DateTime object
 sub _datetime($) {
@@ -83,17 +84,28 @@ sub occured_within_ago($$) {
 	# for something in the future
 	$time = $time->clone->set_nanosecond(0);
 
-	my $duration = shift;
-	unless (blessed $duration && $duration->isa("DateTime::Duration")) {
-		$duration = DateTime::Duration->new(
-			seconds => parse_duration($duration)
-		);
+	my $durations = shift;
+	my ($past_duration, $future_duration);
+	if (ref $durations eq "ARRAY") {
+		($past_duration, $future_duration) = @{ $durations };
+	} else {
+		($past_duration, $future_duration)
+			= ($durations, $Test::Recent::future_duration);
+	}
+
+	foreach my $duration ($past_duration, $future_duration) {
+		unless (blessed $duration && $duration->isa("DateTime::Duration")) {
+			$duration = DateTime::Duration->new(
+				seconds => parse_duration($duration)
+			);
+		}
 	}
 
 	my $now = _now;
-	my $ago = $now - $duration;
+	my $ago = $now - $past_duration;
+	my $ahead = $now + $future_duration;
 
-	return if $now  < $time;
+	return if $ahead < $time;
 	return if $time < $ago;
 	return 1;
 }
@@ -185,6 +197,69 @@ i.e. something of the form C<YYYY-MM-DD HH:MM:SS.ssssss+TZ>
 
 Older versions of this module used DateTimeX::Easy to parse the datetime, but
 this proved to be unreliable.
+
+=head2 Future Timestamps
+
+By default Test::Recent fails any timestamp that comes from the future as
+not being recent, which is sensible behavior if you expect the timestamps to
+be generated on the same machine as you're running the test on.
+
+However, there are several situations where this might not be what you
+want.
+
+=over
+
+=item Remote Machines
+
+If your network is faster than the clock drift between the machine you're
+running the test on and the machine (e.g. the database server) that's 
+creating the timestamp then you might get future timestamps.
+
+=item Rounding Errors
+
+Some situations can result in creating a timestamp from the future due to
+rounding errors.  For example executing this on postgresql:
+
+  SELECT EXTRACT(epoch FROM current_timestamp)::integer;
+
+Will give you a timestamp in the future 50% of the time.
+
+=back
+
+There's two things you can do:
+
+=over 
+
+=item Pass an arrayref instead
+
+Instead of passing just a single duration, you can pass an arrayref containing
+two durations:
+
+   recent $datetime, [ 10, 5 ], "is within 10 sec ago, or 5 secs from now";
+   recent $datatime, [
+      DateTime::Duration->new( seconds => 10 ),
+      DateTime::Duration->new( seconds => 5 ),
+   ],  "is within 10 sec ago, or 5 secs from now";
+
+   occured_within_ago $datetime, [ 10, 5 ] or die "boom!";
+   occured_within_ago $datatime, [
+      DateTime::Duration->new( seconds => 10 ),
+      DateTime::Duration->new( seconds => 5 ),
+   ] or die "boom";
+
+=item Set the global variable
+
+You can set a global variable that will always allow so much into
+the future:
+
+  local $Test::Recent::future_duration = 5;
+  recent $datetime, 10, "is within 10 sec ago, or 5 secs from now";
+
+  local $Test::Recent::future_duration =
+     DateTime::Duration->new( seconds => 5 );
+  recent $datetime, 10, "is within 10 sec ago, or 5 secs from now";
+
+=back
 
 =head2 Overriding the sense of "now"
 

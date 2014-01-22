@@ -2,7 +2,7 @@
 
 use strict;
 
-use Test::More tests => 26;
+use Test::More tests => 34;
 use Test::Recent qw(occured_within_ago);
 
 ok(defined &occured_within_ago, "exported");
@@ -61,4 +61,29 @@ ok occured_within_ago('2012-05-23T10:36:30.187215','10s'), "nanoseconds (high)";
 ok occured_within_ago(1337769390.1234, '10s'), "epoch nanoseconds";
 ok occured_within_ago(1337769390.988, '10s'), "epoch nanoseconds";
 
+# test future handling
+my $soon = $now + DateTime::Duration->new( seconds => 2 );
+ok occured_within_ago($soon, [10, 2]) ,"future: epoch";
+ok occured_within_ago($soon, [10, DateTime::Duration->new( seconds => 2 )]) ,"future: duration";
+ok !occured_within_ago($soon, [10, 1]) ,"future: epoch fail";
+ok !occured_within_ago($soon, [10, DateTime::Duration->new( seconds => 1 )]) ,"future: duration fail";
+
+{
+  local $Test::Recent::future_duration = 2;
+  ok occured_within_ago($soon, 10), "future global: epoch";
+}
+{
+  local $Test::Recent::future_duration = 1;
+  ok !occured_within_ago($soon, 10), "future global: epoch fail";
+}
+
+{
+  local $Test::Recent::future_duration = DateTime::Duration->new( seconds => 2 );
+  ok occured_within_ago($soon, 10), "future global: duration";
+}
+
+{
+  local $Test::Recent::future_duration = 1;
+  ok !occured_within_ago($soon, 10), "future global: epoch fail";
+}
 

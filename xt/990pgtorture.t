@@ -20,10 +20,23 @@ my $sth = $dbh->prepare(<<'SQL');
 	SELECT now() as n;
 SQL
 
-for (1..25000) {
+for (1..5000) {
 	$sth->execute();
 	my ($time) = $sth->fetchrow_array;
 	recent $time;
 }
+
+$sth = $dbh->prepare(<<'SQL');
+	SELECT EXTRACT(epoch FROM current_timestamp)::integer as n;
+SQL
+
+
+for (1..5000) {
+	local $Test::Recent::future_duration = 1;
+	$sth->execute();
+	my ($time) = $sth->fetchrow_array;
+	recent $time;
+}
+
 
 done_testing;

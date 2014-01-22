@@ -1,3 +1,5 @@
+2.50  Add the ability to have future timestamps
+
 2.10  Change diagnostics to show what time we're comparing against.
       Very useful when looking at old log files from jenkins hours later...
 
