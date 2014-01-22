@@ -45,6 +45,58 @@ DESCRIPTION
     Older versions of this module used DateTimeX::Easy to parse the
     datetime, but this proved to be unreliable.
 
+  Future Timestamps
+    By default Test::Recent fails any timestamp that comes from the future
+    as not being recent, which is sensible behavior if you expect the
+    timestamps to be generated on the same machine as you're running the
+    test on.
+
+    However, there are several situations where this might not be what you
+    want.
+
+    Remote Machines
+        If your network is faster than the clock drift between the machine
+        you're running the test on and the machine (e.g. the database
+        server) that's creating the timestamp then you might get future
+        timestamps.
+
+    Rounding Errors
+        Some situations can result in creating a timestamp from the future
+        due to rounding errors. For example executing this on postgresql:
+
+          SELECT EXTRACT(epoch FROM current_timestamp)::integer;
+
+        Will give you a timestamp in the future 50% of the time.
+
+    There's two things you can do:
+
+    Pass an arrayref instead
+        Instead of passing just a single duration, you can pass an arrayref
+        containing two durations:
+
+           recent $datetime, [ 10, 5 ], "is within 10 sec ago, or 5 secs from now";
+           recent $datatime, [
+              DateTime::Duration->new( seconds => 10 ),
+              DateTime::Duration->new( seconds => 5 ),
+           ],  "is within 10 sec ago, or 5 secs from now";
+
+           occured_within_ago $datetime, [ 10, 5 ] or die "boom!";
+           occured_within_ago $datatime, [
+              DateTime::Duration->new( seconds => 10 ),
+              DateTime::Duration->new( seconds => 5 ),
+           ] or die "boom";
+
+    Set the global variable
+        You can set a global variable that will always allow so much into
+        the future:
+
+          local $Test::Recent::future_duration = 5;
+          recent $datetime, 10, "is within 10 sec ago, or 5 secs from now";
+
+          local $Test::Recent::future_duration =
+             DateTime::Duration->new( seconds => 5 );
+          recent $datetime, 10, "is within 10 sec ago, or 5 secs from now";
+
   Overriding the sense of "now"
     Sometimes you want someone else's concept of *now*. For example, you
     might want to pull back the time from the database server and compare
